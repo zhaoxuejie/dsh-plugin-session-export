@@ -36,6 +36,30 @@ details.tool .body{padding:4px 12px 12px}
 .muted{color:var(--muted)}
 .sep{height:1px;background:var(--border);margin:24px 0}
 footer{color:var(--muted);font-size:12px;margin-top:40px;text-align:center}
+/* 代码高亮 */
+.hl{font-family:ui-monospace,Consolas,monospace}
+.hl .hl-key{color:var(--accent)}
+.hl .hl-str{color:var(--ok)}
+.hl .hl-num{color:var(--warn)}
+.hl .hl-bool{color:var(--reason)}
+.hl .hl-null{color:var(--muted)}
+.hl .hl-punc{color:var(--muted)}
+/* 轮次时间轴 */
+.timeline{margin:16px 0;padding:12px 0}
+.timeline-track{display:flex;align-items:stretch;gap:3px;height:36px;margin:8px 0}
+.timeline-bar{position:relative;min-width:4px;border-radius:4px;cursor:default;transition:opacity .15s;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.timeline-bar:hover{opacity:.8}
+.timeline-bar .tl-label{font-size:11px;font-weight:600;color:#fff;white-space:nowrap;padding:0 4px;text-shadow:0 1px 2px rgba(0,0,0,.4)}
+.timeline-bar.ok{background:linear-gradient(180deg,#2ea043,#1a7f37)}
+.timeline-bar.err{background:linear-gradient(180deg,#f85149,#cf222e)}
+.timeline-bar.warn{background:linear-gradient(180deg,#d29922,#9a6700)}
+.timeline-bar.run{background:linear-gradient(180deg,#4493f8,#0969da)}
+.timeline-bar.unknown{background:var(--border)}
+.timeline-gap{flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+.timeline-legend{display:flex;gap:16px;font-size:12px;color:var(--muted);margin-top:8px;flex-wrap:wrap}
+.timeline-legend span{display:inline-flex;align-items:center;gap:5px}
+.timeline-legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.timeline-meta{font-size:12px;color:var(--muted);margin-bottom:6px}
 `;
 
 /**
@@ -89,6 +113,9 @@ export function renderHtmlReport(snap, stats, opts = {}) {
   const tu = s.tokenUsage ?? {};
   parts.push(`<div class="card"><div class="k">Token 用量</div><div class="v" style="font-size:13px">输入 ${tu.promptTokens ?? 0} · 输出 ${tu.completionTokens ?? 0} · 合计 ${tu.totalTokens ?? 0}</div></div>`);
   parts.push("</div>");
+
+  // ---- 轮次时间轴可视化 ----
+  parts.push(renderTimeline(st.turnTimeline ?? [], snap.firstEventTime, snap.lastEventTime));
 
   // ---- 逐轮复盘 ----
   parts.push("<h2>逐轮复盘</h2>");
@@ -194,13 +221,13 @@ function renderEventHtml(evt) {
     case EVENT_TYPES.TOOL_CALL: {
       const argsHtml = evt.args === null
         ? '<p class="muted">（入参未记录）</p>'
-        : `<pre>${escapeHtml(safeStringify(evt.args))}</pre>`;
+        : `<pre class="hl">${highlightCode(safeStringify(evt.args))}</pre>`;
       return `<details class="tool"><summary>🛠 ${escapeHtml(evt.toolName ?? "unknown")} <span class="dur">${formatTime(evt.time)}</span></summary><div class="body">${argsHtml}</div></details>`;
     }
     case EVENT_TYPES.TOOL_RESULT: {
       const dur = evt.durationMs !== null && evt.durationMs !== undefined ? ` · 耗时 ${formatDuration(evt.durationMs)}` : "";
       const badge = evt.isError ? '<span class="badge err">执行失败</span>' : "";
-      return `<div class="tool-result"><span class="dur">→ 返回${dur}</span> ${badge}<pre>${escapeHtml(evt.text)}</pre></div>`;
+      return `<div class="tool-result"><span class="dur">→ 返回${dur}</span> ${badge}<pre class="hl">${highlightCode(evt.text)}</pre></div>`;
     }
     default:
       return "";
@@ -227,4 +254,115 @@ function oneLine(s, max) {
   const str = String(s ?? "").replace(/\s+/g, " ").trim();
   if (str.length <= max) return str || "(空)";
   return str.slice(0, max) + "…";
+}
+
+/**
+ * 轻量代码高亮：自动检测 JSON，对键/字符串/数字/布尔/null 着色。
+ * 非 JSON 内容做纯文本转义返回。零依赖，内联 CSS class。
+ */
+function highlightCode(text) {
+  const raw = String(text ?? "");
+  const trimmed = raw.trim();
+  // 检测 JSON（对象或数组开头）
+  const isJson = (trimmed.startsWith("{") && trimmed.endsWith("}")) ||
+                 (trimmed.startsWith("[") && trimmed.endsWith("]"));
+  if (!isJson) return escapeHtml(raw);
+
+  // 逐字符扫描，正确处理字符串内的转义
+  let out = "";
+  let i = 0;
+  let inKey = false;
+  let afterColon = false;
+  while (i < raw.length) {
+    const ch = raw[i];
+    // 字符串
+    if (ch === '"') {
+      let j = i + 1;
+      let str = "";
+      while (j < raw.length) {
+        if (raw[j] === "\\" && j + 1 < raw.length) { str += raw[j] + raw[j + 1]; j += 2; continue; }
+        if (raw[j] === '"') break;
+        str += raw[j];
+        j++;
+      }
+      const full = raw.slice(i, j + 1);
+      // 判断是键还是值：键后面跟冒号
+      const rest = raw.slice(j + 1).trimStart();
+      const isKey = rest.startsWith(":");
+      out += `<span class="hl-${isKey ? "key" : "str"}">${escapeHtml(full)}</span>`;
+      i = j + 1;
+      continue;
+    }
+    // 数字
+    if (/[0-9-]/.test(ch) && (i === 0 || /[\s,:[\]]/.test(raw[i - 1]))) {
+      let j = i;
+      while (j < raw.length && /[0-9.eE+-]/.test(raw[j])) j++;
+      out += `<span class="hl-num">${escapeHtml(raw.slice(i, j))}</span>`;
+      i = j;
+      continue;
+    }
+    // 布尔 / null
+    if (/[tfn]/.test(ch) && (i === 0 || /[\s,:[\]]/.test(raw[i - 1]))) {
+      if (raw.startsWith("true", i)) { out += `<span class="hl-bool">true</span>`; i += 4; continue; }
+      if (raw.startsWith("false", i)) { out += `<span class="hl-bool">false</span>`; i += 5; continue; }
+      if (raw.startsWith("null", i)) { out += `<span class="hl-null">null</span>`; i += 4; continue; }
+    }
+    // 标点
+    if (/[{}\[\]:,]/.test(ch)) {
+      out += `<span class="hl-punc">${escapeHtml(ch)}</span>`;
+      i++;
+      continue;
+    }
+    out += escapeHtml(ch);
+    i++;
+  }
+  return out;
+}
+
+/**
+ * 渲染轮次时间轴可视化。
+ * 每轮一个横向条，宽度按耗时比例，颜色按结束状态。
+ */
+function renderTimeline(timeline, firstEventTime, lastEventTime) {
+  if (!Array.isArray(timeline) || !timeline.length) return "";
+  // 计算总跨度（从第一轮 start 到最后一轮 end）
+  const starts = timeline.map((t) => t.start).filter((t) => t !== null);
+  const ends = timeline.map((t) => t.end).filter((t) => t !== null);
+  const minTime = starts.length ? Math.min(...starts) : null;
+  const maxTime = ends.length ? Math.max(...ends) : null;
+  if (minTime === null || maxTime === null || maxTime <= minTime) return "";
+  const totalSpan = maxTime - minTime;
+
+  const bars = [];
+  let prevEnd = minTime;
+  for (const t of timeline) {
+    // 轮次间隔
+    if (t.start !== null && t.start > prevEnd) {
+      const gapPct = ((t.start - prevEnd) / totalSpan) * 100;
+      if (gapPct > 0.3) bars.push(`<div class="timeline-gap" style="flex:0 0 ${gapPct.toFixed(2)}%" title="间隔 ${formatDuration(t.start - prevEnd)}"></div>`);
+    }
+    // 轮次条
+    const dur = t.duration !== null ? t.duration : (t.end !== null && t.start !== null ? t.end - t.start : 0);
+    const pct = Math.max(0.8, (dur / totalSpan) * 100);
+    const cls = t.endKind === "completed" ? "ok" :
+                t.endKind === "error" ? "err" :
+                (t.endKind === "interrupted" || t.endKind === "aborted" || t.endKind === "max-tokens") ? "warn" :
+                t.endKind === null ? "run" : "unknown";
+    const label = t.duration !== null ? `T${t.turn} · ${formatDuration(t.duration)}` : `T${t.turn}`;
+    const tooltip = `第 ${t.turn} 轮 · ${t.endLabel ?? t.endKind ?? "进行中"} · ${t.duration !== null ? formatDuration(t.duration) : "未完成"}`;
+    bars.push(`<div class="timeline-bar ${cls}" style="flex:0 0 ${pct.toFixed(2)}%" title="${escapeHtml(tooltip)}"><span class="tl-label">${escapeHtml(label)}</span></div>`);
+    if (t.end !== null) prevEnd = t.end;
+  }
+
+  const totalDur = maxTime - minTime;
+  return `<div class="timeline">
+    <div class="timeline-meta">轮次时间轴 · 总跨度 ${formatDuration(totalDur)} · ${timeline.length} 轮</div>
+    <div class="timeline-track">${bars.join("")}</div>
+    <div class="timeline-legend">
+      <span><i style="background:#1a7f37"></i>完成</span>
+      <span><i style="background:#cf222e"></i>报错</span>
+      <span><i style="background:#9a6700"></i>中断/中止</span>
+      <span><i style="background:#0969da"></i>进行中</span>
+    </div>
+  </div>`;
 }

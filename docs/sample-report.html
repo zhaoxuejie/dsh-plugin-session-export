@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN" class="theme-dark">
+<html lang="zh-CN" class="">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>会话复盘报告</title>
+<title>会话复盘报告 · 天气查询演示</title>
 <style>
 :root{--bg:#ffffff;--fg:#1f2328;--muted:#57606a;--card:#f6f8fa;--border:#d0d7de;--accent:#0969da;--ok:#1a7f37;--err:#cf222e;--warn:#9a6700;--code:#f6f8fa;--reason:#8250df}
 @media (prefers-color-scheme:dark){:root{--bg:#0d1117;--fg:#e6edf3;--muted:#8b949e;--card:#161b22;--border:#30363d;--accent:#4493f8;--ok:#3fb950;--err:#f85149;--warn:#d29922;--code:#161b22;--reason:#bc8cff}}
@@ -38,65 +38,98 @@ details.tool .body{padding:4px 12px 12px}
 .muted{color:var(--muted)}
 .sep{height:1px;background:var(--border);margin:24px 0}
 footer{color:var(--muted);font-size:12px;margin-top:40px;text-align:center}
+/* 代码高亮 */
+.hl{font-family:ui-monospace,Consolas,monospace}
+.hl .hl-key{color:var(--accent)}
+.hl .hl-str{color:var(--ok)}
+.hl .hl-num{color:var(--warn)}
+.hl .hl-bool{color:var(--reason)}
+.hl .hl-null{color:var(--muted)}
+.hl .hl-punc{color:var(--muted)}
+/* 轮次时间轴 */
+.timeline{margin:16px 0;padding:12px 0}
+.timeline-track{display:flex;align-items:stretch;gap:3px;height:36px;margin:8px 0}
+.timeline-bar{position:relative;min-width:4px;border-radius:4px;cursor:default;transition:opacity .15s;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.timeline-bar:hover{opacity:.8}
+.timeline-bar .tl-label{font-size:11px;font-weight:600;color:#fff;white-space:nowrap;padding:0 4px;text-shadow:0 1px 2px rgba(0,0,0,.4)}
+.timeline-bar.ok{background:linear-gradient(180deg,#2ea043,#1a7f37)}
+.timeline-bar.err{background:linear-gradient(180deg,#f85149,#cf222e)}
+.timeline-bar.warn{background:linear-gradient(180deg,#d29922,#9a6700)}
+.timeline-bar.run{background:linear-gradient(180deg,#4493f8,#0969da)}
+.timeline-bar.unknown{background:var(--border)}
+.timeline-gap{flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+.timeline-legend{display:flex;gap:16px;font-size:12px;color:var(--muted);margin-top:8px;flex-wrap:wrap}
+.timeline-legend span{display:inline-flex;align-items:center;gap:5px}
+.timeline-legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.timeline-meta{font-size:12px;color:var(--muted);margin-bottom:6px}
 </style>
 </head>
 <body><div class="wrap">
-<h1>会话复盘报告</h1>
-<div class="meta">导出时间：2025-09-06 03:22:03 · 格式：HTML · 主题：dark</div>
+<h1>会话复盘报告 · 天气查询演示</h1>
+<div class="meta">导出时间：2026-09-07 16:27:28 · 格式：HTML · 主题：light</div>
 <div class="grid">
-<div class="card"><div class="k">会话 ID</div><div class="v"><code>demo-ses…9f3a2c</code></div></div>
-<div class="card"><div class="k">开始时间</div><div class="v">2025-09-06 03:20:00</div></div>
-<div class="card"><div class="k">最后活动</div><div class="v">2025-09-06 03:20:03</div></div>
-<div class="card"><div class="k">总耗时</div><div class="v">3.5s</div></div>
-<div class="card"><div class="k">轮次数</div><div class="v">2</div></div>
+<div class="card"><div class="k">会话 ID</div><div class="v"><code>demo-session-001</code></div></div>
+<div class="card"><div class="k">开始时间</div><div class="v">2026-09-07 16:27:28</div></div>
+<div class="card"><div class="k">最后活动</div><div class="v">2026-09-07 16:27:34</div></div>
+<div class="card"><div class="k">总耗时</div><div class="v">3.6s</div></div>
+<div class="card"><div class="k">轮次数</div><div class="v">3</div></div>
 <div class="card"><div class="k">工具调用</div><div class="v">3 次</div></div>
-<div class="card"><div class="k">报错</div><div class="v">2</div></div>
+<div class="card"><div class="k">报错</div><div class="v">1</div></div>
 <div class="card"><div class="k">中断</div><div class="v">0</div></div>
-<div class="card"><div class="k">平均轮次耗时</div><div class="v">1.6s</div></div>
-<div class="card"><div class="k">Token 用量</div><div class="v" style="font-size:13px">输入 380 · 输出 108 · 合计 488</div></div>
+<div class="card"><div class="k">平均轮次耗时</div><div class="v">1.7s</div></div>
+<div class="card"><div class="k">Token 用量</div><div class="v" style="font-size:13px">输入 500 · 输出 120 · 合计 620</div></div>
 </div>
+<div class="timeline">
+    <div class="timeline-meta">轮次时间轴 · 总跨度 6.6s · 3 轮</div>
+    <div class="timeline-track"><div class="timeline-bar ok" style="flex:0 0 33.33%" title="第 1 轮 · 完成 · 2.2s"><span class="tl-label">T1 · 2.2s</span></div><div class="timeline-gap" style="flex:0 0 12.12%" title="间隔 800ms"></div><div class="timeline-bar ok" style="flex:0 0 25.76%" title="第 2 轮 · 完成 · 1.7s"><span class="tl-label">T2 · 1.7s</span></div><div class="timeline-gap" style="flex:0 0 12.12%" title="间隔 800ms"></div><div class="timeline-bar err" style="flex:0 0 16.67%" title="第 3 轮 · 报错 · 1.1s"><span class="tl-label">T3 · 1.1s</span></div></div>
+    <div class="timeline-legend">
+      <span><i style="background:#1a7f37"></i>完成</span>
+      <span><i style="background:#cf222e"></i>报错</span>
+      <span><i style="background:#9a6700"></i>中断/中止</span>
+      <span><i style="background:#0969da"></i>进行中</span>
+    </div>
+  </div>
 <h2>逐轮复盘</h2>
-<h3>第 1 轮 · <span class="badge ok">完成</span> <span class="dur">2.0s</span></h3><p><strong>用户输入</strong> <span class="dur">03:20:00</span></p><blockquote>帮我把这个项目的代码结构梳理一下，看看有哪些插件</blockquote><p><strong>模型回复 · deepseek-chat</strong> <span class="dur">03:20:00</span> </p><pre>[思考] 用户想了解项目结构，我需要用 bash 列出目录，再逐个查看关键文件的 package.json。</pre><details class="tool"><summary>🛠 bash <span class="dur">03:20:01</span></summary><div class="body"><pre>{
-  &quot;command&quot;: &quot;ls -la&quot;,
-  &quot;cwd&quot;: &quot;D:/projectDsh&quot;
-}</pre></div></details><div class="tool-result"><span class="dur">→ 返回 · 耗时 2.2s</span> <pre>dsh-plugin-obsidian
-dsh-plugin-session-export
-deepseek-harness
-moqian-dsh-plugin</pre></div><details class="tool"><summary>🛠 read_file <span class="dur">03:20:01</span></summary><div class="body"><pre>{
-  &quot;path&quot;: &quot;dsh-plugin-obsidian/package.json&quot;
-}</pre></div></details><div class="tool-result"><span class="dur">→ 返回 · 耗时 2.6s</span> <pre>{&quot;name&quot;:&quot;dsh-plugin-vault-memory&quot;,&quot;version&quot;:&quot;0.2.0&quot;}</pre></div><p><strong>模型回复 · deepseek-chat</strong> <span class="dur">03:20:02</span> </p><pre>项目下共 4 个主要目录，其中 dsh-plugin-obsidian 是一个 Obsidian 记忆插件（v0.2.0）。</pre>
-<h3>第 2 轮 · <span class="badge err">报错</span> <span class="dur">1.3s</span></h3><p><strong>用户输入</strong> <span class="dur">03:20:02</span></p><blockquote>那 session-export 呢？</blockquote><details class="tool"><summary>🛠 web_fetch <span class="dur">03:20:03</span></summary><div class="body"><pre>{
-  &quot;url&quot;: &quot;https://example.com/api&quot;
-}</pre></div></details><div class="tool-result"><span class="dur">→ 返回 · 耗时 3.8s</span> <span class="badge err">执行失败</span><pre>[工具执行失败: FetchError]</pre></div><p><strong>模型回复 · deepseek-chat</strong> <span class="dur">03:20:03</span> </p><pre>抱歉，刚才请求失败了（503），我换个方式再试。</pre>
+<h3>第 1 轮 · <span class="badge ok">完成</span> <span class="dur">2.2s</span></h3><p><strong>用户输入</strong> <span class="dur">16:27:28</span></p><blockquote>帮我查一下今天的天气</blockquote><details class="tool"><summary>🛠 weather_search <span class="dur">16:27:28</span></summary><div class="body"><pre class="hl"><span class="hl-punc">{</span>
+  <span class="hl-key">&quot;city&quot;</span><span class="hl-punc">:</span> <span class="hl-str">&quot;北京&quot;</span><span class="hl-punc">,</span>
+  <span class="hl-key">&quot;date&quot;</span><span class="hl-punc">:</span> <span class="hl-str">&quot;2026-09-07&quot;</span><span class="hl-punc">,</span>
+  <span class="hl-key">&quot;api_key&quot;</span><span class="hl-punc">:</span> <span class="hl-str">&quot;sk-xxxx-secret&quot;</span>
+<span class="hl-punc">}</span></pre></div></details><div class="tool-result"><span class="dur">→ 返回 · 耗时 1.2s</span> <pre class="hl"><span class="hl-punc">{</span><span class="hl-key">&quot;temp&quot;</span><span class="hl-punc">:</span> <span class="hl-num">26</span><span class="hl-punc">,</span> <span class="hl-key">&quot;condition&quot;</span><span class="hl-punc">:</span> <span class="hl-str">&quot;晴&quot;</span><span class="hl-punc">,</span> <span class="hl-key">&quot;wind&quot;</span><span class="hl-punc">:</span> <span class="hl-str">&quot;北风3级&quot;</span><span class="hl-punc">,</span> <span class="hl-key">&quot;humidity&quot;</span><span class="hl-punc">:</span> <span class="hl-num">45</span><span class="hl-punc">}</span></pre></div><p><strong>模型回复 · deepseek-v4</strong> <span class="dur">16:27:30</span> </p><pre>北京今天晴，气温26度，北风3级，湿度45%。适合出行。</pre>
+<h3>第 2 轮 · <span class="badge ok">完成</span> <span class="dur">1.7s</span></h3><p><strong>用户输入</strong> <span class="dur">16:27:31</span></p><blockquote>再查一下上海</blockquote><details class="tool"><summary>🛠 weather_search <span class="dur">16:27:31</span></summary><div class="body"><pre class="hl"><span class="hl-punc">{</span>
+  <span class="hl-key">&quot;city&quot;</span><span class="hl-punc">:</span> <span class="hl-str">&quot;上海&quot;</span>
+<span class="hl-punc">}</span></pre></div></details><div class="tool-result"><span class="dur">→ 返回 · 耗时 800ms</span> <pre class="hl"><span class="hl-punc">{</span><span class="hl-key">&quot;temp&quot;</span><span class="hl-punc">:</span> <span class="hl-num">28</span><span class="hl-punc">,</span> <span class="hl-key">&quot;condition&quot;</span><span class="hl-punc">:</span> <span class="hl-str">&quot;多云&quot;</span><span class="hl-punc">,</span> <span class="hl-key">&quot;wind&quot;</span><span class="hl-punc">:</span> <span class="hl-str">&quot;东风2级&quot;</span><span class="hl-punc">}</span></pre></div><p><strong>模型回复 · deepseek-v4</strong> <span class="dur">16:27:32</span> </p><pre>上海今天多云，28度。</pre>
+<h3>第 3 轮 · <span class="badge err">报错</span> <span class="dur">1.1s</span></h3><p><strong>用户输入</strong> <span class="dur">16:27:33</span></p><blockquote>调用一个会报错的工具</blockquote><details class="tool"><summary>🛠 bad_tool <span class="dur">16:27:34</span></summary><div class="body"><pre class="hl"><span class="hl-punc">{</span>
+  <span class="hl-key">&quot;x&quot;</span><span class="hl-punc">:</span> <span class="hl-num">1</span>
+<span class="hl-punc">}</span></pre></div></details><div class="tool-result"><span class="dur">→ 返回 · 耗时 500ms</span> <span class="badge err">执行失败</span><pre class="hl">Error: something went wrong</pre></div>
 <h2>工具调用统计</h2>
 <table><thead><tr><th>工具</th><th>调用次数</th><th>平均耗时</th><th>最长耗时</th></tr></thead><tbody>
-<tr><td><code>bash</code></td><td>1</td><td>2.2s</td><td>2.2s</td></tr>
-<tr><td><code>read_file</code></td><td>1</td><td>2.6s</td><td>2.6s</td></tr>
-<tr><td><code>web_fetch</code></td><td>1</td><td>3.8s</td><td>3.8s</td></tr>
+<tr><td><code>weather_search</code></td><td>2</td><td>1.0s</td><td>1.2s</td></tr>
+<tr><td><code>bad_tool</code></td><td>1</td><td>500ms</td><td>500ms</td></tr>
 </tbody></table>
 <h2>报错汇总</h2>
 <table><thead><tr><th>时间</th><th>轮次</th><th>类型</th><th>错误消息</th></tr></thead><tbody>
-<tr><td>2025-09-06 03:20:06</td><td>2</td><td>工具执行</td><td>上游服务暂不可用（503）</td></tr>
-<tr><td>2025-09-06 03:20:03</td><td>2</td><td>模型请求</td><td>Model request failed after tool error</td></tr>
+<tr><td>2026-09-07 16:27:34</td><td>3</td><td>工具执行</td><td>Error: something went wrong</td></tr>
 </tbody></table>
 <h2>原始事件流</h2>
 <p class="muted">按采集时序排列的完整事件时间线（文本已按配置截断）。</p>
 <pre>
-[03:20:00] 轮次 #1 开始
-[03:20:00] 轮次 #1 用户输入：帮我把这个项目的代码结构梳理一下，看看有哪些插件
-[03:20:00] 轮次 #1 模型回复：[思考] 用户想了解项目结构，我需要用 bash 列出目录，再逐个查看关键文件的 package.json。
-[03:20:01] 轮次 #1 工具调用 bash：{ &quot;command&quot;: &quot;ls -la&quot;, &quot;cwd&quot;: &quot;D:/projectDsh&quot; }
-[03:20:03] 轮次 #1 工具返回（2.2s）：dsh-plugin-obsidian dsh-plugin-session-export deepseek-harness moqian-dsh-plugin
-[03:20:01] 轮次 #1 工具调用 read_file：{ &quot;path&quot;: &quot;dsh-plugin-obsidian/package.json&quot; }
-[03:20:04] 轮次 #1 工具返回（2.6s）：{&quot;name&quot;:&quot;dsh-plugin-vault-memory&quot;,&quot;version&quot;:&quot;0.2.0&quot;}
-[03:20:02] 轮次 #1 模型回复：项目下共 4 个主要目录，其中 dsh-plugin-obsidian 是一个 Obsidian 记忆插件（v0.2.0）。
-[03:20:02] 轮次 #1 结束（完成）
-[03:20:02] 轮次 #2 开始
-[03:20:02] 轮次 #2 用户输入：那 session-export 呢？
-[03:20:03] 轮次 #2 工具调用 web_fetch：{ &quot;url&quot;: &quot;https://example.com/api&quot; }
-[03:20:06] 轮次 #2 工具返回（错误）（3.8s）：[工具执行失败: FetchError]
-[03:20:03] 轮次 #2 模型回复：抱歉，刚才请求失败了（503），我换个方式再试。
-[03:20:03] 轮次 #2 结束（报错）
+[16:27:28] 轮次 #1 开始
+[16:27:28] 轮次 #1 用户输入：帮我查一下今天的天气
+[16:27:28] 轮次 #1 工具调用 weather_search：{ &quot;city&quot;: &quot;北京&quot;, &quot;date&quot;: &quot;2026-09-07&quot;, &quot;api_key&quot;: &quot;sk-xxxx-se…
+[16:27:29] 轮次 #1 工具返回（1.2s）：{&quot;temp&quot;: 26, &quot;condition&quot;: &quot;晴&quot;, &quot;wind&quot;: &quot;北风3级&quot;, &quot;humidity&quot;: 45}
+[16:27:30] 轮次 #1 模型回复：北京今天晴，气温26度，北风3级，湿度45%。适合出行。
+[16:27:30] 轮次 #1 结束（完成）
+[16:27:31] 轮次 #2 开始
+[16:27:31] 轮次 #2 用户输入：再查一下上海
+[16:27:31] 轮次 #2 工具调用 weather_search：{ &quot;city&quot;: &quot;上海&quot; }
+[16:27:32] 轮次 #2 工具返回（800ms）：{&quot;temp&quot;: 28, &quot;condition&quot;: &quot;多云&quot;, &quot;wind&quot;: &quot;东风2级&quot;}
+[16:27:32] 轮次 #2 模型回复：上海今天多云，28度。
+[16:27:32] 轮次 #2 结束（完成）
+[16:27:33] 轮次 #3 开始
+[16:27:33] 轮次 #3 用户输入：调用一个会报错的工具
+[16:27:34] 轮次 #3 工具调用 bad_tool：{ &quot;x&quot;: 1 }
+[16:27:34] 轮次 #3 工具返回（错误）（500ms）：Error: something went wrong
+[16:27:34] 轮次 #3 结束（报错）
 </pre>
 <div class="sep"></div>
 <footer>由 dsh-plugin-session-export 生成 · DeepSeek Harness 会话黑匣子</footer>
