@@ -4,6 +4,7 @@
 //   自行构造 module/exports，末尾 module.exports = { name, apply } 并 return module.exports；
 //   apply(ctx) 挂载 DOM 并返回 dispose。
 // 面板能力：会话统计卡片、工具分布迷你条形、导出 Markdown/HTML、清空记录、自动刷新。
+// UI 入口：右上角导航栏按钮（"Session 日志"左侧），样式与导航栏按钮一致。
 
 window.__ModuleLoader__.load({
   id: "dsh-plugin-session-export",
@@ -23,16 +24,12 @@ window.__ModuleLoader__.load({
     }
 
     var css = [
-      "#dsh-session-export-fab{position:fixed;right:20px;bottom:20px;z-index:2147483000;width:52px;height:52px;border-radius:50%;",
-      "background:linear-gradient(135deg,#4D6BFE,#7C3AED);color:#fff;border:none;cursor:pointer;font-size:22px;",
-      "box-shadow:0 4px 16px rgba(77,107,254,.45);display:flex;align-items:center;justify-content:center;",
-      "font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;transition:transform .15s}",
-      "#dsh-session-export-fab:hover{transform:scale(1.06)}",
-      "#dsh-session-export-panel{position:fixed;right:20px;bottom:84px;z-index:2147483001;width:340px;max-height:70vh;",
+      "#dsh-session-export-panel{position:fixed;top:56px;right:16px;z-index:2147483001;width:340px;max-height:70vh;",
       "background:#171a21;color:#e8eaed;border-radius:12px;border:1px solid #30363d;box-shadow:0 8px 32px rgba(0,0,0,.5);",
       "display:none;flex-direction:column;overflow:hidden;font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;",
       "font-size:13px;line-height:1.5}",
       "#dsh-session-export-panel.open{display:flex}",
+      ".dse-nav-btn{display:inline-flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap}",
       ".dse-head{padding:12px 14px;border-bottom:1px solid #30363d;display:flex;align-items:center;justify-content:space-between}",
       ".dse-head b{font-size:14px}",
       ".dse-close{background:none;border:none;color:#8b949e;font-size:16px;cursor:pointer;padding:0 4px}",
@@ -61,7 +58,7 @@ window.__ModuleLoader__.load({
     var styleNode = el("style", {}, css);
     document.head.appendChild(styleNode);
 
-    var fab = el("button", { id: "dsh-session-export-fab", title: "会话黑匣子" }, "\ud83d\udce6");
+    // ---- 面板 DOM ----
     var panel = el("div", { id: "dsh-session-export-panel" });
 
     var head = el("div", { class: "dse-head" });
@@ -84,8 +81,60 @@ window.__ModuleLoader__.load({
     body.appendChild(status); body.appendChild(cards); body.appendChild(bars); body.appendChild(empty); body.appendChild(actions);
     var foot = el("div", { class: "dse-foot" }, "dsh-plugin-session-export");
     panel.appendChild(head); panel.appendChild(body); panel.appendChild(foot);
-    document.body.appendChild(fab);
     document.body.appendChild(panel);
+
+    // ---- 导航栏按钮：注入到"Session 日志"左侧，样式保持一致 ----
+    var navBtn = el("button", { class: "dse-nav-btn", title: "会话黑匣子" });
+    navBtn.innerHTML = "\ud83d\udce6 <span>会话黑匣子</span>";
+    var navInjected = false;
+
+    function findSessionLogBtn() {
+      // 优先找包含"Session"或"日志"文本的 button
+      var btns = document.querySelectorAll("button");
+      for (var i = 0; i < btns.length; i++) {
+        var txt = btns[i].textContent || "";
+        if (txt.indexOf("Session") >= 0 || txt.indexOf("\u65e5\u5fd7") >= 0) {
+          return btns[i];
+        }
+      }
+      return null;
+    }
+
+    function injectNavButton() {
+      if (navInjected) return true;
+      var refBtn = findSessionLogBtn();
+      if (!refBtn || !refBtn.parentNode) return false;
+      // 复制参考按钮的样式，保持视觉一致
+      try {
+        var cs = window.getComputedStyle(refBtn);
+        navBtn.style.background = cs.background;
+        navBtn.style.color = cs.color;
+        navBtn.style.border = cs.border;
+        navBtn.style.borderRadius = cs.borderRadius;
+        navBtn.style.padding = cs.padding;
+        navBtn.style.fontSize = cs.fontSize;
+        navBtn.style.fontFamily = cs.fontFamily;
+        navBtn.style.fontWeight = cs.fontWeight;
+        navBtn.style.cursor = "pointer";
+        navBtn.style.display = "inline-flex";
+        navBtn.style.alignItems = "center";
+        navBtn.style.gap = "6px";
+        navBtn.className = refBtn.className + " dse-nav-btn";
+      } catch (e) { /* 样式复制失败不影响功能 */ }
+      refBtn.parentNode.insertBefore(navBtn, refBtn);
+      navInjected = true;
+      return true;
+    }
+
+    if (typeof MutationObserver !== "undefined") {
+      var navObserver = new MutationObserver(function () {
+        injectNavButton();
+        if (navInjected) navObserver.disconnect();
+      });
+      navObserver.observe(document.body, { childList: true, subtree: true });
+    }
+    // 立即尝试一次（页面可能已渲染完成）
+    injectNavButton();
 
     // ---- 状态 ----
     var open = false;
@@ -95,13 +144,13 @@ window.__ModuleLoader__.load({
       if (open) { panel.classList.add("open"); refresh(); }
       else panel.classList.remove("open");
     }
-    fab.addEventListener("click", toggle);
+    navBtn.addEventListener("click", toggle);
     closeBtn.addEventListener("click", function () { open = false; panel.classList.remove("open"); });
 
     // ---- 数据 ----
     function shortId(id) {
       var s = String(id || "-");
-      return s.length > 20 ? s.slice(0, 8) + "…" + s.slice(-4) : s;
+      return s.length > 20 ? s.slice(0, 8) + "\u2026" + s.slice(-4) : s;
     }
 
     function renderCards(data) {
@@ -130,17 +179,17 @@ window.__ModuleLoader__.load({
       }
       empty.style.display = "none";
       btnMd.disabled = btnHtml.disabled = btnClear.disabled = false;
-      status.textContent = "最近活跃：" + shortId(s.sessionId) + (s.title ? "（" + s.title + "）" : "") + (s.stopped ? " ⚠️ 已达上限" : "");
+      status.textContent = "最近活跃：" + shortId(s.sessionId) + (s.title ? "\uff08" + s.title + "\uff09" : "") + (s.stopped ? " \u26a0\ufe0f 已达上限" : "");
       var items = [
         ["轮次", s.turnCount || 0],
         ["工具调用", s.toolCallCount || 0],
         ["报错", s.errorCount || 0],
         ["中断", s.interruptedCount || 0],
       ];
-      for (var i = 0; i < items.length; i++) {
+      for (var j = 0; j < items.length; j++) {
         var c = el("div", { class: "dse-card" });
-        c.appendChild(el("div", { class: "k" }, items[i][0]));
-        c.appendChild(el("div", { class: "v" }, String(items[i][1])));
+        c.appendChild(el("div", { class: "k" }, items[j][0]));
+        c.appendChild(el("div", { class: "v" }, String(items[j][1])));
         cards.appendChild(c);
       }
       // 工具分布
@@ -152,15 +201,15 @@ window.__ModuleLoader__.load({
         .sort(function (a, b) { return b[1] - a[1]; }).slice(0, 5);
       if (total > 0 && entries.length) {
         bars.appendChild(el("div", { class: "k", style: "color:#8b949e;font-size:11px;margin-bottom:4px" }, "工具调用分布"));
-        for (var j = 0; j < entries.length; j++) {
+        for (var m = 0; m < entries.length; m++) {
           var row = el("div", { class: "bar-row" });
-          row.appendChild(el("div", { class: "bar-name", title: entries[j][0] }, entries[j][0]));
+          row.appendChild(el("div", { class: "bar-name", title: entries[m][0] }, entries[m][0]));
           var track = el("div", { class: "bar-track" });
           var fill = el("div", { class: "bar-fill" });
-          fill.style.width = Math.max(4, Math.round((entries[j][1] / total) * 100)) + "%";
+          fill.style.width = Math.max(4, Math.round((entries[m][1] / total) * 100)) + "%";
           track.appendChild(fill);
           row.appendChild(track);
-          row.appendChild(el("div", { class: "bar-num" }, String(entries[j][1])));
+          row.appendChild(el("div", { class: "bar-num" }, String(entries[m][1])));
           bars.appendChild(row);
         }
       }
@@ -181,14 +230,14 @@ window.__ModuleLoader__.load({
         .then(function (r) { return r.text(); })
         .then(function (text) {
           var blob = new Blob([text], { type: format === "html" ? "text/html" : "text/markdown" });
-          var url = URL.createObjectURL(blob);
+          var objUrl = URL.createObjectURL(blob);
           var a = document.createElement("a");
-          a.href = url;
+          a.href = objUrl;
           a.download = "session-report." + (format === "html" ? "html" : "md");
           document.body.appendChild(a);
           a.click();
           a.remove();
-          setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+          setTimeout(function () { URL.revokeObjectURL(objUrl); }, 2000);
         })
         .catch(function () { status.textContent = "导出失败"; });
     }
@@ -210,8 +259,9 @@ window.__ModuleLoader__.load({
       // 挂载已在上方完成；返回清理函数
       return function dispose() {
         clearInterval(timer);
+        if (typeof navObserver !== "undefined" && navObserver) navObserver.disconnect();
         styleNode.remove();
-        fab.remove();
+        if (navBtn.parentNode) navBtn.remove();
         panel.remove();
       };
     }

@@ -457,6 +457,7 @@ test("client.js 遵循 ModuleLoader 契约（factory 仅收 require，自行构�
     head: makeEl("head"),
     body: makeEl("body"),
     createElement: (tag) => makeEl(tag),
+    querySelectorAll: () => [],
     addEventListener() {},
   };
   const sandbox = {
