@@ -1,0 +1,4 @@
+# dsh-plugin-session-export bundle patch: 向 web 组合挂载会话复盘导出插件
+- insert:
+    - id: dsh-plugin-session-export
+      name: dsh-plugin-session-export

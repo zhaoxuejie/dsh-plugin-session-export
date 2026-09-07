@@ -1,0 +1,44 @@
+{
+  "name": "dsh-plugin-session-export",
+  "version": "1.0.0",
+  "description": "DeepSeek Harness 会话黑匣子插件：全量旁路采集会话事件（轮次/工具/报错），一键导出美化 Markdown / HTML 复盘报告",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./client": "./src/client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "cordis.patch.yml",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "docs"
+  ],
+  "scripts": {
+    "test": "node test/run-all.mjs"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "session",
+    "export",
+    "review",
+    "debug",
+    "transcript"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  },
+  "dependencies": {
+    "schemastery": "^3.18.0"
+  },
+  "license": "MIT"
+}

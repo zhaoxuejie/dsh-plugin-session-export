@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="theme-dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>会话复盘报告</title>
+<style>
+:root{--bg:#ffffff;--fg:#1f2328;--muted:#57606a;--card:#f6f8fa;--border:#d0d7de;--accent:#0969da;--ok:#1a7f37;--err:#cf222e;--warn:#9a6700;--code:#f6f8fa;--reason:#8250df}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1117;--fg:#e6edf3;--muted:#8b949e;--card:#161b22;--border:#30363d;--accent:#4493f8;--ok:#3fb950;--err:#f85149;--warn:#d29922;--code:#161b22;--reason:#bc8cff}}
+.theme-dark{--bg:#0d1117;--fg:#e6edf3;--muted:#8b949e;--card:#161b22;--border:#30363d;--accent:#4493f8;--ok:#3fb950;--err:#f85149;--warn:#d29922;--code:#161b22;--reason:#bc8cff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.7 -apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;padding:32px 16px}
+.wrap{max-width:920px;margin:0 auto}
+h1{font-size:24px;margin:0 0 4px}
+h2{font-size:18px;margin:32px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+h3{font-size:15px;margin:20px 0 8px}
+.meta{color:var(--muted);font-size:13px;margin-bottom:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:16px 0}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.card .k{color:var(--muted);font-size:12px}
+.card .v{font-size:18px;font-weight:600;margin-top:2px}
+table{border-collapse:collapse;width:100%;margin:8px 0;font-size:13px}
+th,td{border:1px solid var(--border);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--card)}
+code{background:var(--code);border-radius:4px;padding:1px 5px;font-family:ui-monospace,Consolas,monospace;font-size:12.5px}
+pre{background:var(--code);border:1px solid var(--border);border-radius:6px;padding:10px 12px;overflow:auto;font-size:12.5px;white-space:pre-wrap;word-break:break-word}
+blockquote{border-left:3px solid var(--border);margin:8px 0;padding:4px 12px;color:var(--muted);white-space:pre-wrap}
+.dur{color:var(--muted);font-size:12px}
+.badge{display:inline-block;border-radius:10px;padding:1px 8px;font-size:12px;font-weight:500}
+.badge.ok{background:rgba(26,127,55,.12);color:var(--ok)}
+.badge.err{background:rgba(207,34,46,.12);color:var(--err)}
+.badge.warn{background:rgba(154,103,0,.14);color:var(--warn)}
+.badge.run{background:rgba(9,105,218,.12);color:var(--accent)}
+details.tool{margin:8px 0;border:1px solid var(--border);border-radius:6px;background:var(--card)}
+details.tool summary{cursor:pointer;padding:8px 12px;font-weight:600;user-select:none}
+details.tool .body{padding:4px 12px 12px}
+.reason{color:var(--reason)}
+.muted{color:var(--muted)}
+.sep{height:1px;background:var(--border);margin:24px 0}
+footer{color:var(--muted);font-size:12px;margin-top:40px;text-align:center}
+</style>
+</head>
+<body><div class="wrap">
+<h1>会话复盘报告</h1>
+<div class="meta">导出时间：2025-09-06 03:22:03 · 格式：HTML · 主题：dark</div>
+<div class="grid">
+<div class="card"><div class="k">会话 ID</div><div class="v"><code>demo-ses…9f3a2c</code></div></div>
+<div class="card"><div class="k">开始时间</div><div class="v">2025-09-06 03:20:00</div></div>
+<div class="card"><div class="k">最后活动</div><div class="v">2025-09-06 03:20:03</div></div>
+<div class="card"><div class="k">总耗时</div><div class="v">3.5s</div></div>
+<div class="card"><div class="k">轮次数</div><div class="v">2</div></div>
+<div class="card"><div class="k">工具调用</div><div class="v">3 次</div></div>
+<div class="card"><div class="k">报错</div><div class="v">2</div></div>
+<div class="card"><div class="k">中断</div><div class="v">0</div></div>
+<div class="card"><div class="k">平均轮次耗时</div><div class="v">1.6s</div></div>
+<div class="card"><div class="k">Token 用量</div><div class="v" style="font-size:13px">输入 380 · 输出 108 · 合计 488</div></div>
+</div>
+<h2>逐轮复盘</h2>
+<h3>第 1 轮 · <span class="badge ok">完成</span> <span class="dur">2.0s</span></h3><p><strong>用户输入</strong> <span class="dur">03:20:00</span></p><blockquote>帮我把这个项目的代码结构梳理一下，看看有哪些插件</blockquote><p><strong>模型回复 · deepseek-chat</strong> <span class="dur">03:20:00</span> </p><pre>[思考] 用户想了解项目结构，我需要用 bash 列出目录，再逐个查看关键文件的 package.json。</pre><details class="tool"><summary>🛠 bash <span class="dur">03:20:01</span></summary><div class="body"><pre>{
+  &quot;command&quot;: &quot;ls -la&quot;,
+  &quot;cwd&quot;: &quot;D:/projectDsh&quot;
+}</pre></div></details><div class="tool-result"><span class="dur">→ 返回 · 耗时 2.2s</span> <pre>dsh-plugin-obsidian
+dsh-plugin-session-export
+deepseek-harness
+moqian-dsh-plugin</pre></div><details class="tool"><summary>🛠 read_file <span class="dur">03:20:01</span></summary><div class="body"><pre>{
+  &quot;path&quot;: &quot;dsh-plugin-obsidian/package.json&quot;
+}</pre></div></details><div class="tool-result"><span class="dur">→ 返回 · 耗时 2.6s</span> <pre>{&quot;name&quot;:&quot;dsh-plugin-vault-memory&quot;,&quot;version&quot;:&quot;0.2.0&quot;}</pre></div><p><strong>模型回复 · deepseek-chat</strong> <span class="dur">03:20:02</span> </p><pre>项目下共 4 个主要目录，其中 dsh-plugin-obsidian 是一个 Obsidian 记忆插件（v0.2.0）。</pre>
+<h3>第 2 轮 · <span class="badge err">报错</span> <span class="dur">1.3s</span></h3><p><strong>用户输入</strong> <span class="dur">03:20:02</span></p><blockquote>那 session-export 呢？</blockquote><details class="tool"><summary>🛠 web_fetch <span class="dur">03:20:03</span></summary><div class="body"><pre>{
+  &quot;url&quot;: &quot;https://example.com/api&quot;
+}</pre></div></details><div class="tool-result"><span class="dur">→ 返回 · 耗时 3.8s</span> <span class="badge err">执行失败</span><pre>[工具执行失败: FetchError]</pre></div><p><strong>模型回复 · deepseek-chat</strong> <span class="dur">03:20:03</span> </p><pre>抱歉，刚才请求失败了（503），我换个方式再试。</pre>
+<h2>工具调用统计</h2>
+<table><thead><tr><th>工具</th><th>调用次数</th><th>平均耗时</th><th>最长耗时</th></tr></thead><tbody>
+<tr><td><code>bash</code></td><td>1</td><td>2.2s</td><td>2.2s</td></tr>
+<tr><td><code>read_file</code></td><td>1</td><td>2.6s</td><td>2.6s</td></tr>
+<tr><td><code>web_fetch</code></td><td>1</td><td>3.8s</td><td>3.8s</td></tr>
+</tbody></table>
+<h2>报错汇总</h2>
+<table><thead><tr><th>时间</th><th>轮次</th><th>类型</th><th>错误消息</th></tr></thead><tbody>
+<tr><td>2025-09-06 03:20:06</td><td>2</td><td>工具执行</td><td>上游服务暂不可用（503）</td></tr>
+<tr><td>2025-09-06 03:20:03</td><td>2</td><td>模型请求</td><td>Model request failed after tool error</td></tr>
+</tbody></table>
+<h2>原始事件流</h2>
+<p class="muted">按采集时序排列的完整事件时间线（文本已按配置截断）。</p>
+<pre>
+[03:20:00] 轮次 #1 开始
+[03:20:00] 轮次 #1 用户输入：帮我把这个项目的代码结构梳理一下，看看有哪些插件
+[03:20:00] 轮次 #1 模型回复：[思考] 用户想了解项目结构，我需要用 bash 列出目录，再逐个查看关键文件的 package.json。
+[03:20:01] 轮次 #1 工具调用 bash：{ &quot;command&quot;: &quot;ls -la&quot;, &quot;cwd&quot;: &quot;D:/projectDsh&quot; }
+[03:20:03] 轮次 #1 工具返回（2.2s）：dsh-plugin-obsidian dsh-plugin-session-export deepseek-harness moqian-dsh-plugin
+[03:20:01] 轮次 #1 工具调用 read_file：{ &quot;path&quot;: &quot;dsh-plugin-obsidian/package.json&quot; }
+[03:20:04] 轮次 #1 工具返回（2.6s）：{&quot;name&quot;:&quot;dsh-plugin-vault-memory&quot;,&quot;version&quot;:&quot;0.2.0&quot;}
+[03:20:02] 轮次 #1 模型回复：项目下共 4 个主要目录，其中 dsh-plugin-obsidian 是一个 Obsidian 记忆插件（v0.2.0）。
+[03:20:02] 轮次 #1 结束（完成）
+[03:20:02] 轮次 #2 开始
+[03:20:02] 轮次 #2 用户输入：那 session-export 呢？
+[03:20:03] 轮次 #2 工具调用 web_fetch：{ &quot;url&quot;: &quot;https://example.com/api&quot; }
+[03:20:06] 轮次 #2 工具返回（错误）（3.8s）：[工具执行失败: FetchError]
+[03:20:03] 轮次 #2 模型回复：抱歉，刚才请求失败了（503），我换个方式再试。
+[03:20:03] 轮次 #2 结束（报错）
+</pre>
+<div class="sep"></div>
+<footer>由 dsh-plugin-session-export 生成 · DeepSeek Harness 会话黑匣子</footer>
+</div></body></html>
