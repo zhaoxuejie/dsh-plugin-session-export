@@ -1,6 +1,6 @@
 {
   "name": "dsh-plugin-session-export",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "DeepSeek Harness 会话黑匣子插件：全量旁路采集会话事件（轮次/工具/报错），一键导出美化 Markdown / HTML 复盘报告",
   "type": "module",
   "main": "src/index.mjs",
@@ -29,6 +29,14 @@
     "debug",
     "transcript"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhaoxuejie/dsh-plugin-session-export.git"
+  },
+  "homepage": "https://github.com/zhaoxuejie/dsh-plugin-session-export#readme",
+  "bugs": {
+    "url": "https://github.com/zhaoxuejie/dsh-plugin-session-export/issues"
+  },
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"

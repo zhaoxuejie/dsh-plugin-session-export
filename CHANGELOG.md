@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.1] - 2026-09-10
+
+### 变更
+
+- 补全 npm 包元数据：新增 `repository` / `homepage` / `bugs` 字段，使 npm 包页面可回链 GitHub 仓库与 Issue 区。
+
 ## [1.0.0] - 2026-09-06
 
 首个正式版本，按 `PRD.md` 完整实现。
